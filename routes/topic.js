@@ -5,12 +5,13 @@ var fs = require('fs');
 var sanitizeHtml = require('sanitize-html');
 var template = require('../lib/template.js');
 var auth = require('../lib/auth');
+const { isLoggedIn } = require('../lib/middleware');
 
-router.get('/create', function(request, response){
-    if(!auth.isOwner(request, response)){
-        response.redirect('/');
-        return false;
-    }
+router.get('/create', isLoggedIn, function(request, response){
+    // if(!auth.isOwner(request, response)){
+    //     response.redirect('/');
+    //     return false;
+    // } isLoggedIn 이전 process
     var title = 'create';
     var list = template.list(request.list);
     var html = template.html(title, list, `<form action="/topic/create_process" method="post">
@@ -25,11 +26,7 @@ router.get('/create', function(request, response){
     response.send(html);
 })
 
-router.post('/create_process', function(request, response){
-    if(!auth.isOwner(request, response)){
-        response.redirect('/');
-        return false;
-    }
+router.post('/create_process', isLoggedIn, function(request, response){
     var post = request.body;
     var title = post.title;
     var description = post.description;
@@ -39,11 +36,7 @@ router.post('/create_process', function(request, response){
     })
 })
 
-router.get('/update/:pageId', function(request, response){
-    if(!auth.isOwner(request, response)){
-        response.redirect('/');
-        return false;
-    }
+router.get('/update/:pageId', isLoggedIn, function(request, response){
     var filteredId = path.parse(request.params.pageId).base
     fs.readFile(`data/${filteredId}`, 'utf8', function(err, description) {
         var title = request.params.pageId;
@@ -67,11 +60,7 @@ router.get('/update/:pageId', function(request, response){
     });
 })
 
-router.post('/update_process', function(request, response){
-    if(!auth.isOwner(request, response)){
-        response.redirect('/');
-        return false;
-    }
+router.post('/update_process', isLoggedIn, function(request, response){
     var post = request.body;
     var id = post.id;
     var title = post.title;
@@ -84,11 +73,7 @@ router.post('/update_process', function(request, response){
     });
 })
 
-router.post('/delete_process', function(request, response){ 
-    if(!auth.isOwner(request, response)){
-        response.redirect('/');
-        return false;
-    }
+router.post('/delete_process', isLoggedIn, function(request, response){ 
     var post = request.body;
     var id = post.id;
     var filteredId = path.parse(id).base;

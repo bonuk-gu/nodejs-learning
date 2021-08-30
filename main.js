@@ -7,9 +7,7 @@ var compression = require('compression');
 var session = require('express-session');
 var FileStore = require('session-file-store')(session)
 var flash = require('connect-flash');
-var cors = require('cors');
 
-app.use(cors());
 app.use(express.static('public'));
 app.use(bodyParser.urlencoded({ extended: false }));
 app.use(compression());
@@ -25,12 +23,12 @@ var passport = require('./lib/passport')(app);
 app.use(flash());
 
 // session store에 데이터를 저장했다가 사용하면 지워지는 1회용 message
-app.get('/flash', function(req, res){
+app.get('/flash', function(req, res) {
     // Set a flash message by passing the key, followed by the value, to req.flash().
     req.flash('msg', 'Flash is back!!')
     res.send('flash');
-  });
-  
+});
+
 app.get('/flash-display', function(req, res){
     // Get an array of flash messages by passing the key to req.flash()
     var fmsg = req.flash();
